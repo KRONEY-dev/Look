@@ -5,11 +5,59 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Look"
         mc:Ignorable="d"
-        Title="Look!" Height="450" Width="800" KeyDown="MainWind_KeyDown" MouseWheel="MainWind_MouseWheel">
+        Title="Look!" 
+        Height="450" Width="800" 
+        KeyDown="MainWind_KeyDown" 
+        MouseWheel="MainWind_MouseWheel">
 
     <Window.Background>
         <SolidColorBrush Color="White"/>
     </Window.Background>
+
+    <Window.Resources>
+        <Style x:Key="Rotation_Button_Style" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF4362CB"/>
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                            <EventTrigger RoutedEvent="PreviewMouseDown">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Storyboard.TargetProperty="BorderThickness"
+                                                            Duration="0:0:0.100"
+                                                            To="2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="PreviewMouseUp">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Storyboard.TargetProperty="BorderThickness"
+                                                            Duration="0:0:0.100"
+                                                            To="0"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -19,7 +67,10 @@
 
         <Grid Grid.Row="0">
 
-            <InkCanvas x:Name="Canvas_Draw_Panel" Cursor="ArrowCD" Background="Transparent" Panel.ZIndex="1">
+            <InkCanvas x:Name="Canvas_Draw_Panel" 
+                       Cursor="ArrowCD" 
+                       Background="Transparent" 
+                       Panel.ZIndex="1">
                 <InkCanvas.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform x:Name="Canvas_Scale_Transf"/>
@@ -56,75 +107,65 @@
 
         </Grid>
 
-        <StackPanel x:Name="Tool_Panel" Orientation="Vertical" VerticalAlignment="Bottom" Grid.Row="1">
-            <CheckBox x:Name="Control_Panel_Button" Checked="Control_Panel_Button_Checked" Unchecked="Control_Panel_Button_Unchecked">
+        <StackPanel x:Name="Tool_Panel" 
+                    Orientation="Vertical" 
+                    VerticalAlignment="Bottom" Grid.Row="1">
+            
+            <CheckBox x:Name="Control_Panel_Button" 
+                      Checked="Control_Panel_Button_Checked" 
+                      Unchecked="Control_Panel_Button_Unchecked">
                 <CheckBox.Style>
                     <Style TargetType="CheckBox">
                         <Setter Property="OverridesDefaultStyle" Value="True"/>
                         <Setter Property="HorizontalAlignment" Value="Center"/>
                         <Setter Property="VerticalAlignment" Value="Bottom"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsChecked" Value="False">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="CheckBox">
-                                            <Border x:Name="Check_border" Height="21" Width="42" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="Background">
-                                                            <Setter.Value>
-                                                                <ImageBrush ImageSource="Resource/Triger.png"/>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="BorderBrush" Value="LightGray"/>
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="CheckBox">
-                                            <Border x:Name="Check_border" Height="21" Width="42" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="CheckBox">
+                                    <Border x:Name="Check_border" 
+                                                    Height="21" Width="42" 
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="LightGray"/>
+                                                    </Trigger>
+
+                                                    <DataTrigger Binding="{Binding ElementName=Control_Panel_Button, Path=IsChecked}" Value="True">
                                                         <Setter Property="Background">
                                                             <Setter.Value>
                                                                 <ImageBrush ImageSource="Resource/Triger_bott.png"/>
                                                             </Setter.Value>
                                                         </Setter>
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsMouseOver" Value="True">
-                                                                <Setter Property="BorderBrush" Value="LightGray"/>
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </Style.Triggers>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding ElementName=Control_Panel_Button, Path=IsChecked}" Value="False">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <ImageBrush ImageSource="Resource/Triger.png"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </CheckBox.Style>
             </CheckBox>
 
-            <Border x:Name="Tool_border" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="40" Width="400">
+            <Border x:Name="Tool_border" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="400">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="#FF4343CB"/>
                         <Setter Property="BorderThickness" Value="3"/>
                         <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="Height" Value="40"/>
                         <Setter Property="Padding" Value="5"/>
                     </Style>
                 </Border.Style>
@@ -132,82 +173,45 @@
                 <Grid>
                     <StackPanel Orientation="Horizontal">
 
-                        <Button x:Name="Rotation_Left_90" Click="Rotation_Left_90_Click" Foreground="Transparent">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Width" Value="30"/>
-                                    <Setter Property="Margin" Value="5,0,10,0"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
-                                                    <Image Name="Rotation_Left_image">
-                                                        <Image.Style>
-                                                            <Style TargetType="{x:Type Image}">
-                                                                <Setter Property="Source" Value="Resource/rotating-arrow-symbol_Left.png"/>
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=Rotation_Left_image}" Value="True">
-                                                                        <Setter Property="Source" Value="Resource/rotating-arrow-symbol_Left.png"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </Image.Style>
-                                                    </Image>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#FF4362CB"/>
-                                                        <Setter Property="Opacity" Value="0.6"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
+                        <Button x:Name="Rotation_Left_90" 
+                                Click="Rotation_Left_90_Click"
+                                Margin="5,0,10,0"
+                                Style="{StaticResource Rotation_Button_Style}">
+                            <Image Name="Rotation_Left_image">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter x:Name="Pasive" Property="Source" Value="Resource\rotating-arrow-symbol_Left.png"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=Rotation_Left_90}" Value="True">
+                                                <Setter x:Name="Active" Property="Source" Value="Resource/rotating-arrow-symbol_Left_Akt.png"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                         </Button>
 
-                        <Button x:Name="Rotation_Right_90" Click="Rotation_Right_90_Click" Width="30">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Margin" Value="0,0,10,0"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
-                                                    <Image Name="Min_Button">
-                                                        <Image.Style>
-                                                            <Style TargetType="{x:Type Image}">
-                                                                <Setter Property="Source" Value="Resource/rotating-arrow-symbol_RIght.png"/>
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=Min_Button}" Value="True">
-                                                                        <Setter Property="Source" Value="Resource/rotating-arrow-symbol_RIght.png"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </Image.Style>
-                                                    </Image>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property= "Background" Value="#FF4362CB"/>
-                                                        <Setter Property="Opacity" Value="0.6"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
+                        <Button x:Name="Rotation_Right_90" 
+                                Click="Rotation_Right_90_Click" 
+                                Margin="0,0,10,0" 
+                                Style="{StaticResource Rotation_Button_Style}">
+                            <Image Name="Min_Button">
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Setter Property="Source" Value="Resource/rotating-arrow-symbol_RIght.png"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=Min_Button}" Value="True">
+                                                <Setter Property="Source" Value="Resource/rotating-arrow-symbol_RIght.png"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                         </Button>
 
-                        <ToggleButton x:Name="Draw_Button" Checked="Draw_Button_Checked" Unchecked="Draw_Button_Unchecked">
+                        <ToggleButton x:Name="Draw_Button" 
+                                      Checked="Draw_Button_Checked" 
+                                      Unchecked="Draw_Button_Unchecked">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -289,7 +293,9 @@
                         </ToggleButton>
                     </StackPanel>
 
-                    <CheckBox x:Name="Full_Screen" Checked="Full_Screen_Checked" Unchecked="Full_Screen_Unchecked">
+                    <CheckBox x:Name="Full_Screen" 
+                              Checked="Full_Screen_Checked" 
+                              Unchecked="Full_Screen_Unchecked">
                         <CheckBox.Style>
                             <Style TargetType="CheckBox">
                                 <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -299,7 +305,9 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="CheckBox">
-                                                    <Border x:Name="Check_border" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Border x:Name="Check_border" 
+                                                            Height="24" Width="24" 
+                                                            HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         <Border.Style>
                                                             <Style TargetType="Border">
@@ -325,7 +333,9 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="CheckBox">
-                                                    <Border x:Name="Check_border" Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Border x:Name="Check_border" 
+                                                            Height="24" Width="24" 
+                                                            HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         <Border.Style>
                                                             <Style TargetType="Border">
@@ -354,7 +364,9 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                        <ToggleButton x:Name="Canvas_Cleaner" Unchecked="Canvas_Cleaner_Unchecked" Checked="Canvas_Cleaner_Checked">
+                        <ToggleButton x:Name="Canvas_Cleaner" 
+                                      Unchecked="Canvas_Cleaner_Unchecked" 
+                                      Checked="Canvas_Cleaner_Checked">
                             <ToggleButton.Background>
                                 <SolidColorBrush Color="Transparent"/>
                             </ToggleButton.Background>

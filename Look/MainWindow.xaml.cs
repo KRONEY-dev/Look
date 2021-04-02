@@ -1,27 +1,15 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Look
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -69,7 +57,7 @@ namespace Look
 
         void Closer()
         {
-            this.Close();
+            Close();
         }
 
         public MainWindow(string fileName)
@@ -86,12 +74,15 @@ namespace Look
                     MainWind.MinHeight = Image_box.Height + 200;
                     MainWind.MinWidth = Image_box.Width + 50;
 
-                    Image_box.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
-                    Canvas_Draw_Panel.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
+                    Image_box.RenderTransformOrigin = new Point(0.5, 0.5);
+                    Canvas_Draw_Panel.RenderTransformOrigin = new Point(0.5, 0.5);
+
+                    Border_Height = Tool_border.Height;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
+                    Closer();
                 }
             }
         }
@@ -100,6 +91,8 @@ namespace Look
         {
             Image_box.Width = image_info.Width;
             Image_box.Height = image_info.Height;
+            Image_box.MaxWidth = SystemParameters.PrimaryScreenWidth - 200;
+            Image_box.MaxHeight = SystemParameters.PrimaryScreenHeight - 200;
             if (image_info.Height < 800 && image_info.Width < 800)
             {
                 MainWind.Height = 900;
@@ -112,81 +105,71 @@ namespace Look
             }
         }
 
-        //private double Tool_border_Height = Tool_border.ActualHeight;
+        private void Control_Panel_Animation_func(Border control_figure, double to, double duration)
+        {
+            var Animation = new DoubleAnimation
+            {
+                From = control_figure.Height,
+                To = to,
+                Duration = TimeSpan.FromMilliseconds(duration)
+            };
+            control_figure.BeginAnimation(HeightProperty, Animation);
+        }
 
         private void Control_Panel_Button_Checked(object sender, RoutedEventArgs e)
         {
-            var Anim_trig_hide = new DoubleAnimation
-            {
-                From = Tool_border.ActualHeight,
-                To = 0,
-                Duration = TimeSpan.FromMilliseconds(200)
-            };
-            Tool_border.BeginAnimation(HeightProperty, Anim_trig_hide);
+            Control_Panel_Animation_func(Tool_border, 0, 200);
         }
+
+        private double Border_Height;
 
         private void Control_Panel_Button_Unchecked(object sender, RoutedEventArgs e)
         {
-            Tool_border.Visibility = Visibility.Visible;
-            var Amin_trig_open = new DoubleAnimation
+            Control_Panel_Animation_func(Tool_border, Border_Height, 500);
+        }
+
+        private void Rotation_Animation_func(Control control)
+        {
+            control.IsEnabled = false;
+            double Rotate_Value;
+            if (control.Name.ToString().Contains("Left"))
             {
-                From = 0,
-                To = 40,
+                Rotate_Value = (Image_Rotate_transf.Angle - 90);
+            }
+            else
+            {
+                Rotate_Value = (Image_Rotate_transf.Angle + 90);
+            }
+
+            var Anim_Rotate_Canvas = new DoubleAnimation
+            {
+                From = Canvas_Rotate_Transf.Angle,
+                To = Rotate_Value,
                 Duration = TimeSpan.FromMilliseconds(200)
             };
-            Tool_border.BeginAnimation(HeightProperty, Amin_trig_open);
+            var Anim_Rotate_Image = new DoubleAnimation
+            {
+                From = Image_Rotate_transf.Angle,
+                To = Rotate_Value,
+                Duration = TimeSpan.FromMilliseconds(200)
+            };
+
+            Anim_Rotate_Image.Completed += (s, e) =>
+            {
+                control.IsEnabled = true;
+            };
+            Image_Rotate_transf.BeginAnimation(RotateTransform.AngleProperty, Anim_Rotate_Image);
+            Canvas_Rotate_Transf.BeginAnimation(RotateTransform.AngleProperty, Anim_Rotate_Canvas);
         }
 
         private void Rotation_Left_90_Click(object sender, RoutedEventArgs e)
         {
-            Rotation_Left_90.IsEnabled = false;
-            var Rotate_Value = (Image_Rotate_transf.Angle - 90);
-            var Anim_Rotate_Left_Canvas = new DoubleAnimation
-            {
-                From = Canvas_Rotate_Transf.Angle,
-                To = Rotate_Value,
-                Duration = TimeSpan.FromMilliseconds(200)
-            };
-            var Anim_Rotate_Left = new DoubleAnimation
-            {
-                From = Image_Rotate_transf.Angle,
-                To = Rotate_Value,
-                Duration = TimeSpan.FromMilliseconds(200)
-            };
-            Anim_Rotate_Left.Completed += Anim_Rotate_Left_Completed;
-            Image_Rotate_transf.BeginAnimation(RotateTransform.AngleProperty, Anim_Rotate_Left);
-            Canvas_Rotate_Transf.BeginAnimation(RotateTransform.AngleProperty, Anim_Rotate_Left_Canvas);
-        }
-
-        private void Anim_Rotate_Left_Completed(object sender, EventArgs e)
-        {
-            Rotation_Left_90.IsEnabled = true;
+            Rotation_Animation_func(Rotation_Left_90);
         }
 
         private void Rotation_Right_90_Click(object sender, RoutedEventArgs e)
         {
-            Rotation_Right_90.IsEnabled = false;
-            var Rotate_Value = (Image_Rotate_transf.Angle + 90);
-            var Anim_Rotate_Left_Canvas = new DoubleAnimation
-            {
-                From = Canvas_Rotate_Transf.Angle,
-                To = Rotate_Value,
-                Duration = TimeSpan.FromMilliseconds(200)
-            };
-            var Anim_Rotate_Right = new DoubleAnimation
-            {
-                From = Image_Rotate_transf.Angle,
-                To = Rotate_Value,
-                Duration = TimeSpan.FromMilliseconds(200)
-            };
-            Anim_Rotate_Right.Completed += Anim_Rotate_Right_Completed;
-            Image_Rotate_transf.BeginAnimation(RotateTransform.AngleProperty, Anim_Rotate_Right);
-            Canvas_Rotate_Transf.BeginAnimation(RotateTransform.AngleProperty, Anim_Rotate_Left_Canvas);
-        }
-
-        private void Anim_Rotate_Right_Completed(object sender, EventArgs e)
-        {
-            Rotation_Right_90.IsEnabled = true;
+            Rotation_Animation_func(Rotation_Right_90);
         }
 
         private void Zoom_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -252,17 +235,19 @@ namespace Look
             }
         }
 
+
         private void MainWind_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Keyboard.Modifiers == ModifierKeys.Control)
             {
+                double Scroll_Change = Zoom_Slider.LargeChange / 4;
                 if (e.Delta >0) //Zoom +
                 {
-                    Zoom_Slider.Value += Zoom_Slider.LargeChange / 4;
+                    Zoom_Slider.Value += Scroll_Change;
                 }
                 else //Zoom -
                 {
-                    Zoom_Slider.Value -= Zoom_Slider.LargeChange / 4;
+                    Zoom_Slider.Value -= Scroll_Change;
                 }
             }
         }

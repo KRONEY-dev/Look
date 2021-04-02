@@ -8,9 +8,6 @@ using System.Windows;
 
 namespace Look
 {
-    /// <summary>
-    /// Логика взаимодействия для App.xaml
-    /// </summary>
     public partial class App : Application
     {
         void App_Startup(object sender, StartupEventArgs e)
@@ -26,7 +23,6 @@ namespace Look
             {
                 mainWindow = new MainWindow();
             }
-            
         }
     }
 }
